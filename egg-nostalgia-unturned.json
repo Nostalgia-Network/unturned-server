@@ -13,7 +13,7 @@
         "nostalgianetwork\/unturned-server:latest": "nostalgianetwork\/unturned-server:latest"
     },
     "file_denylist": [],
-    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
+    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{DIFFICULTY}} +InternetServer\/unturned",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Loading level: 100%\"\r\n}",
