@@ -20,8 +20,6 @@ fi
 if [ -z "${REPOSITORY_BRANCH}" ]; then
     echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
     REPOSITORY_BRANCH="main"
-    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
-    REPOSITORY_BRANCH="main"
 fi
 
 # Check if REPOSITORY_ACCESS_TOKEN is set
@@ -60,10 +58,6 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
-# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
-if [ -n "${CONFIG_SET}" ]; then
-    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
-    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
 # Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
 if [ -n "${CONFIG_SET}" ]; then
     echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
