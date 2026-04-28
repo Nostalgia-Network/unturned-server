@@ -6,18 +6,16 @@ sleep 1
 cd /home/container
 
 TEMP_DIR="tmp/repo"
-# Set the echo color to green
+
 # Set the echo color to green
 GREEN='\033[0;32m'
 
-# Check if REPOSITORY_URL is set
 # Check if REPOSITORY_URL is set
 if [ -z "${REPOSITORY_URL}" ]; then
     echo -e "${GREEN}REPOSITORY_URL is not set, skipping repository clone"
     exit 0
 fi
 
-# Check if REPOSITORY_BRANCH is set
 # Check if REPOSITORY_BRANCH is set
 if [ -z "${REPOSITORY_BRANCH}" ]; then
     echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
@@ -27,19 +25,16 @@ if [ -z "${REPOSITORY_BRANCH}" ]; then
 fi
 
 # Check if REPOSITORY_ACCESS_TOKEN is set
-# Check if REPOSITORY_ACCESS_TOKEN is set
 if [ -z "${REPOSITORY_ACCESS_TOKEN}" ]; then
     echo -e "${GREEN}REPOSITORY_ACCESS_TOKEN is not set, cloning without authentication"
 fi
 
-# Check if INSTALL_DIR is set
 # Check if INSTALL_DIR is set
 if [ -z "${INSTALL_DIR}" ]; then
     echo -e "${GREEN}INSTALL_DIR is not set, defaulting to 'Servers/unturned'"
     INSTALL_DIR="Servers/unturned"
 fi
 
-# Remove temp dir if exists
 # Remove temp dir if exists
 if [ -d "${TEMP_DIR}" ]; then
     rm -rf ${TEMP_DIR}
