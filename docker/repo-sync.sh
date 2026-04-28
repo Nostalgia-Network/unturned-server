@@ -1,13 +1,16 @@
 ﻿#!/bin/bash
 
+
 sleep 1
 
 cd /home/container
 
 TEMP_DIR="tmp/repo"
 # Set the echo color to green
+# Set the echo color to green
 GREEN='\033[0;32m'
 
+# Check if REPOSITORY_URL is set
 # Check if REPOSITORY_URL is set
 if [ -z "${REPOSITORY_URL}" ]; then
     echo -e "${GREEN}REPOSITORY_URL is not set, skipping repository clone"
@@ -15,22 +18,28 @@ if [ -z "${REPOSITORY_URL}" ]; then
 fi
 
 # Check if REPOSITORY_BRANCH is set
+# Check if REPOSITORY_BRANCH is set
 if [ -z "${REPOSITORY_BRANCH}" ]; then
+    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
+    REPOSITORY_BRANCH="main"
     echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
     REPOSITORY_BRANCH="main"
 fi
 
+# Check if REPOSITORY_ACCESS_TOKEN is set
 # Check if REPOSITORY_ACCESS_TOKEN is set
 if [ -z "${REPOSITORY_ACCESS_TOKEN}" ]; then
     echo -e "${GREEN}REPOSITORY_ACCESS_TOKEN is not set, cloning without authentication"
 fi
 
 # Check if INSTALL_DIR is set
+# Check if INSTALL_DIR is set
 if [ -z "${INSTALL_DIR}" ]; then
     echo -e "${GREEN}INSTALL_DIR is not set, defaulting to 'Servers/unturned'"
     INSTALL_DIR="Servers/unturned"
 fi
 
+# Remove temp dir if exists
 # Remove temp dir if exists
 if [ -d "${TEMP_DIR}" ]; then
     rm -rf ${TEMP_DIR}
@@ -56,6 +65,10 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
+# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
+if [ -n "${CONFIG_SET}" ]; then
+    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
+    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
 # Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
 if [ -n "${CONFIG_SET}" ]; then
     echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
@@ -89,8 +102,6 @@ else
     echo -e "${GREEN}${TEMP_DIR}/egg-config.json not found, skipping"
 fi
 
-
-
 if [ -n "${SERVER_CONFIG}" ]; then
     echo -e "${GREEN}Using server config: ${SERVER_CONFIG}"
 else
@@ -99,8 +110,6 @@ else
 fi
 SERVER_CONFIG_PATH="${TEMP_DIR}/Configs/${SERVER_CONFIG}.json"
 cp -f ${SERVER_CONFIG_PATH} ${INSTALL_DIR}/Config.json
-
-
 
 # Apply workshop overrides if set
 WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Workshop/${WORKSHOP}.json"
@@ -120,19 +129,6 @@ ROCKET_DEST_PATH="${INSTALL_DIR}/Rocket/"
 if [ -n "${ROCKET_DIR}" ]; then
     echo -e "${GREEN}Moving contents of $ROCKET_SOURCE_PATH to $ROCKET_DEST_PATH"
     cp -r $ROCKET_SOURCE_PATH/* $ROCKET_DEST_PATH
-fi
-
-# Install Kits plugin/configs if enabled
-KITS_DLL_PATH="${TEMP_DIR}/Kits/Kits.dll"
-KITS_SOURCE_PATH="${TEMP_DIR}/Kits/Kits/"
-KITS_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins/Kits"
-if [ "${KITS}" == "1" ]; then
-    echo -e "${GREEN}Kits are enabled"
-    cp $KITS_DLL_PATH ${INSTALL_DIR}/Rocket/Plugins
-    mkdir -p $KITS_DEST_PATH
-    cp $KITS_SOURCE_PATH* $KITS_DEST_PATH
-else
-    echo -e "${GREEN}Kits are disabled, skipping installation"
 fi
 
 # Clean up temporary directory

@@ -4,13 +4,13 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2025-06-07T15:26:22-07:00",
+    "exported_at": "2026-04-28T18:31:29-07:00",
     "name": "Nostalgia Unturned",
     "author": "marianasaltyns@gmail.com",
     "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
     "features": null,
     "docker_images": {
-        "perds\/nostalgia-unturned-egg:latest": "perds\/nostalgia-unturned-egg:latest"
+        "nostalgianetwork\/unturned-server:latest": "nostalgianetwork\/unturned-server:latest"
     },
     "file_denylist": [],
     "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
@@ -92,7 +92,7 @@
             "name": "Repository URL",
             "description": "The URL to the Git repository that should be cloned for this server.",
             "env_variable": "REPOSITORY_URL",
-            "default_value": "github.com\/Perdyx\/NostalgiaUnturnedConfigs.git",
+            "default_value": "github.com\/Nostalgia-Network\/unturned-configs.git",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",
@@ -100,7 +100,7 @@
         },
         {
             "name": "Repository Access Token",
-            "description": "The access token to use when cloning the repository. This is required for private repositories.",
+            "description": "The access token to use when cloning the repository. This is only required for private repositories.",
             "env_variable": "REPOSITORY_ACCESS_TOKEN",
             "default_value": "",
             "user_viewable": true,
@@ -122,7 +122,7 @@
             "name": "ROCKET_DIR",
             "description": "The RocketMod installation that should be used for this server.",
             "env_variable": "ROCKET_DIR",
-            "default_value": "VanillaPlus",
+            "default_value": "Vanilla",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:255",
@@ -141,7 +141,7 @@
         {
             "name": "Server-specific Config Overrides",
             "description": "Path to server config overrides file",
-            "env_variable": "CONFIG_OVERRIDES",
+            "env_variable": "SERVER_CONFIG",
             "default_value": "",
             "user_viewable": true,
             "user_editable": true,
@@ -159,9 +159,9 @@
             "field_type": "text"
         },
         {
-            "name": "Gamemode",
-            "description": "Server gamemode",
-            "env_variable": "GAMEMODE",
+            "name": "Difficulty",
+            "description": "Server difficulty",
+            "env_variable": "DIFFICULTY",
             "default_value": "Normal",
             "user_viewable": true,
             "user_editable": true,
@@ -199,18 +199,8 @@
             "field_type": "text"
         },
         {
-            "name": "Kits",
-            "description": "Enables kits plugin",
-            "env_variable": "KITS",
-            "default_value": "0",
-            "user_viewable": true,
-            "user_editable": true,
-            "rules": "required|boolean",
-            "field_type": "text"
-        },
-        {
-            "name": "Workshop Overrides",
-            "description": "Path to workshop config overrides file",
+            "name": "Workshop",
+            "description": "Path to workshop config",
             "env_variable": "WORKSHOP",
             "default_value": "",
             "user_viewable": true,
