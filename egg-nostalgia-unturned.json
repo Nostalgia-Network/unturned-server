@@ -4,16 +4,16 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2024-05-30T00:11:33+01:00",
-    "name": "Unturned Git",
-    "author": "contact@restoremonarchy.com",
-    "description": "Unturned dedicated server with GitHub repository sync.",
+    "exported_at": "2025-06-07T15:26:22-07:00",
+    "name": "Nostalgia Unturned",
+    "author": "marianasaltyns@gmail.com",
+    "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
     "features": null,
     "docker_images": {
-        "restoremonarchy/pterodactyl-unturned-git:latest": "restoremonarchy/pterodactyl-unturned-git:latest"
+        "perds\/nostalgia-unturned-egg:latest": "perds\/nostalgia-unturned-egg:latest"
     },
     "file_denylist": [],
-    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} +secureserver\/unturned",
+    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Loading level: 100%\"\r\n}",
@@ -82,7 +82,7 @@
             "name": "Repository Enabled",
             "description": "Set on to enable repository sync",
             "env_variable": "REPOSITORY_ENABLED",
-            "default_value": "0",
+            "default_value": "1",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|boolean",
@@ -92,7 +92,7 @@
             "name": "Repository URL",
             "description": "The URL to the Git repository that should be cloned for this server.",
             "env_variable": "REPOSITORY_URL",
-            "default_value": "github.com/RestoreMonarchyPlugins/UnturnedGit.git",
+            "default_value": "github.com\/Perdyx\/NostalgiaUnturnedConfigs.git",
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:255",
@@ -112,30 +112,110 @@
             "name": "Branch",
             "description": "The branch of the Git repository that should be used for this server.",
             "env_variable": "REPOSITORY_BRANCH",
-            "default_value": "master",
+            "default_value": "main",
             "user_viewable": true,
             "user_editable": true,
             "rules": "required|string|max:255",
             "field_type": "text"
         },
         {
-            "name": "Repository Directory",
-            "description": "The folder inside the repository that should be used for this server. Leave empty to use the root of the repository.",
-            "env_variable": "REPOSITORY_DIR",
-            "default_value": "sample",
+            "name": "ROCKET_DIR",
+            "description": "The RocketMod installation that should be used for this server.",
+            "env_variable": "ROCKET_DIR",
+            "default_value": "VanillaPlus",
             "user_viewable": true,
             "user_editable": true,
-            "rules": "nullable|string|max:255",
+            "rules": "required|string|max:255",
             "field_type": "text"
         },
         {
             "name": "Install Directory",
             "description": "The directory where the server files should be installed.",
             "env_variable": "INSTALL_DIR",
-            "default_value": "Servers/unturned",
+            "default_value": "Servers\/unturned",
             "user_viewable": true,
             "user_editable": false,
             "rules": "required|string|max:255",
+            "field_type": "text"
+        },
+        {
+            "name": "Server-specific Config Overrides",
+            "description": "Path to server config overrides file",
+            "env_variable": "CONFIG_OVERRIDES",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Server Name",
+            "description": "Name as it appears in the server list",
+            "env_variable": "SERVER_NAME",
+            "default_value": "Unturned",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:60",
+            "field_type": "text"
+        },
+        {
+            "name": "Gamemode",
+            "description": "Server gamemode",
+            "env_variable": "GAMEMODE",
+            "default_value": "Normal",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required||in:Easy,Normal,Hard",
+            "field_type": "text"
+        },
+        {
+            "name": "Max Players",
+            "description": "Maximum allowed players",
+            "env_variable": "MAX_PLAYERS",
+            "default_value": "32",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|integer|between:1,100",
+            "field_type": "text"
+        },
+        {
+            "name": "Map",
+            "description": "Server map",
+            "env_variable": "MAP",
+            "default_value": "PEI",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Perspective",
+            "description": "Allowed player perspectives",
+            "env_variable": "PERSPECTIVE",
+            "default_value": "Both",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required||in:Both,First,Third,Vehicle",
+            "field_type": "text"
+        },
+        {
+            "name": "Kits",
+            "description": "Enables kits plugin",
+            "env_variable": "KITS",
+            "default_value": "0",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "required|boolean",
+            "field_type": "text"
+        },
+        {
+            "name": "Workshop Overrides",
+            "description": "Path to workshop config overrides file",
+            "env_variable": "WORKSHOP",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:64",
             "field_type": "text"
         }
     ]

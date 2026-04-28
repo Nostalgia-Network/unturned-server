@@ -1,4 +1,5 @@
-#!/bin/bash
+﻿#!/bin/bash
+
 sleep 2
 
 cd /home/container
@@ -64,9 +65,7 @@ cp -f steam/linux64/steamclient.so .steam/sdk64/steamclient.so
 mkdir -p Unturned_Headless_Data/Plugins/x86_64
 cp -f steam/linux64/steamclient.so Unturned_Headless_Data/Plugins/x86_64/steamclient.so
 
-# check if REPOSITORY_ENABLED is enabled
 if [ "${REPOSITORY_ENABLED}" == "1" ]; then
-    # run repo-sync.sh that is in the same place as entrypoint.sh which is root
     /repo-sync.sh
 fi
 

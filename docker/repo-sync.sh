@@ -1,43 +1,37 @@
-#!/bin/bash
+﻿#!/bin/bash
+
 sleep 1
 
 cd /home/container
 
 TEMP_DIR="tmp/repo"
-# set the echo color to green
+# Set the echo color to green
 GREEN='\033[0;32m'
 
-
-# check if REPOSITORY_URL is set
+# Check if REPOSITORY_URL is set
 if [ -z "${REPOSITORY_URL}" ]; then
     echo -e "${GREEN}REPOSITORY_URL is not set, skipping repository clone"
     exit 0
 fi
 
-# check if REPOSITORY_BRANCH is set
+# Check if REPOSITORY_BRANCH is set
 if [ -z "${REPOSITORY_BRANCH}" ]; then
-    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'master'"
-    REPOSITORY_BRANCH="master"
+    echo -e "${GREEN}REPOSITORY_BRANCH is not set, defaulting to 'main'"
+    REPOSITORY_BRANCH="main"
 fi
 
-# check if REPOSITORY_DIR is set
-if [ -z "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}REPOSITORY_DIR is not set, repository root will be used"
-    REPOSITORY_DIR=""
-fi
-
-# check if REPOSITORY_ACCESS_TOKEN is set
+# Check if REPOSITORY_ACCESS_TOKEN is set
 if [ -z "${REPOSITORY_ACCESS_TOKEN}" ]; then
     echo -e "${GREEN}REPOSITORY_ACCESS_TOKEN is not set, cloning without authentication"
 fi
 
-# check if INSTALL_DIR is set
+# Check if INSTALL_DIR is set
 if [ -z "${INSTALL_DIR}" ]; then
     echo -e "${GREEN}INSTALL_DIR is not set, defaulting to 'Servers/unturned'"
     INSTALL_DIR="Servers/unturned"
 fi
 
-# remove temp dir if exists
+# Remove temp dir if exists
 if [ -d "${TEMP_DIR}" ]; then
     rm -rf ${TEMP_DIR}
     echo -e "${GREEN}Temporary directory ${TEMP_DIR} has been removed."
@@ -62,10 +56,10 @@ fi
 
 echo "${GREEN}Repository successfully cloned to ${TEMP_DIR}"
 
-# read egg-config.json file in REPOSITORY_DIR and delete all paths specified in Delete array, if REPOSITORY_DIR is not specified then read egg-config.json file in TEMP_DIR
-if [ -n "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${REPOSITORY_DIR}"
-    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${REPOSITORY_DIR}/egg-config.json)
+# Read egg-config.json file in CONFIG_SET and delete all paths specified in Delete array
+if [ -n "${CONFIG_SET}" ]; then
+    echo -e "${GREEN}Reading egg-config.json file in ${TEMP_DIR}/${CONFIG_SET}"
+    DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/${CONFIG_SET}/egg-config.json)
 else
     echo "${GREEN}Reading egg-config.json file in ${TEMP_DIR}"
     DELETE_PATHS=$(jq -r '.Delete[]' ${TEMP_DIR}/egg-config.json)
@@ -87,14 +81,61 @@ if [ ! -d "${INSTALL_DIR}" ]; then
     mkdir -p ${INSTALL_DIR}
 fi
 
-# Move the contents of the specified REPOSITORY_DIR to the INSTALL_DIR
-if [ -n "${REPOSITORY_DIR}" ]; then
-    echo -e "${GREEN}Moving contents of ${TEMP_DIR}/${REPOSITORY_DIR} to ${INSTALL_DIR}"
-    ## use cp command
-    cp -r ${TEMP_DIR}/${REPOSITORY_DIR}/* ${INSTALL_DIR}
+# Apply egg-config.json
+if [ -f "${TEMP_DIR}/egg-config.json" ]; then
+    echo -e "${GREEN}Copying ${TEMP_DIR}/egg-config.json to ${INSTALL_DIR}/egg-config.json"
+    cp ${TEMP_DIR}/egg-config.json ${INSTALL_DIR}/egg-config.json
+else
+    echo -e "${GREEN}${TEMP_DIR}/egg-config.json not found, skipping"
 fi
 
-# Clean up: remove the temporary directory
+
+
+if [ -n "${SERVER_CONFIG}" ]; then
+    echo -e "${GREEN}Using server config: ${SERVER_CONFIG}"
+else
+    echo -e "${GREEN}SERVER_CONFIG is not set, defaulting to 'default'"
+    SERVER_CONFIG="default"
+fi
+SERVER_CONFIG_PATH="${TEMP_DIR}/Configs/${SERVER_CONFIG}.json"
+cp -f ${SERVER_CONFIG_PATH} ${INSTALL_DIR}/Config.json
+
+
+
+# Apply workshop overrides if set
+WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Workshop/${WORKSHOP}.json"
+if [ -n "${WORKSHOP}" ]; then
+    echo -e "${GREEN}Workshop config overrides found, applying workshop overrides"
+    if [ -f "$WORKSHOP_OVERRIDE_PATH" ]; then
+        echo -e "${GREEN}Overriding values in ${INSTALL_DIR}/WorkshopDownloadConfig.json with $WORKSHOP_OVERRIDE_PATH"
+        jq '. * input' ${INSTALL_DIR}/WorkshopDownloadConfig.json "$WORKSHOP_OVERRIDE_PATH" > ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json && mv ${INSTALL_DIR}/WorkshopDownloadConfig.tmp.json ${INSTALL_DIR}/WorkshopDownloadConfig.json
+    else
+        echo -e "${GREEN}$WORKSHOP_OVERRIDE_PATH not found, skipping workshop overrides"
+    fi
+fi
+
+# Move Rocket directory contents if set
+ROCKET_SOURCE_PATH="${TEMP_DIR}/Rocket/${ROCKET_DIR}"
+ROCKET_DEST_PATH="${INSTALL_DIR}/Rocket/"
+if [ -n "${ROCKET_DIR}" ]; then
+    echo -e "${GREEN}Moving contents of $ROCKET_SOURCE_PATH to $ROCKET_DEST_PATH"
+    cp -r $ROCKET_SOURCE_PATH/* $ROCKET_DEST_PATH
+fi
+
+# Install Kits plugin/configs if enabled
+KITS_DLL_PATH="${TEMP_DIR}/Kits/Kits.dll"
+KITS_SOURCE_PATH="${TEMP_DIR}/Kits/Kits/"
+KITS_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins/Kits"
+if [ "${KITS}" == "1" ]; then
+    echo -e "${GREEN}Kits are enabled"
+    cp $KITS_DLL_PATH ${INSTALL_DIR}/Rocket/Plugins
+    mkdir -p $KITS_DEST_PATH
+    cp $KITS_SOURCE_PATH* $KITS_DEST_PATH
+else
+    echo -e "${GREEN}Kits are disabled, skipping installation"
+fi
+
+# Clean up temporary directory
 echo -e "${GREEN}Cleaning up: removing temporary directory ${TEMP_DIR}"
 rm -rf ${TEMP_DIR}
 
