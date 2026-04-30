@@ -96,8 +96,8 @@ else
     echo -e "${GREEN}SERVER_CONFIG is not set, defaulting to 'default'"
     SERVER_CONFIG="default"
 fi
-SERVER_CONFIG_PATH="${TEMP_DIR}/Configs/${SERVER_CONFIG}.json"
-cp -f ${SERVER_CONFIG_PATH} ${INSTALL_DIR}/Config.json
+SERVER_CONFIG_PATH="${TEMP_DIR}/Configs/${SERVER_CONFIG}.txt"
+cp -f ${SERVER_CONFIG_PATH} ${INSTALL_DIR}/Config.txt
 
 # Apply workshop overrides if set
 WORKSHOP_OVERRIDE_PATH="${TEMP_DIR}/Workshop/${WORKSHOP}.json"
