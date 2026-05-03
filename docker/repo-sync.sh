@@ -130,7 +130,7 @@ if [ -n "${BLACKLISTED_ITEMS_CONFIG}" ]; then
 
     # Install server-specific config
     mkdir -p $PLUGIN_DEST_PATH/BlacklistedItems/
-    cp ${TEMP_DIR}/Configs/Plugins/BlacklistedItems${BLACKLISTED_ITEMS_CONFIG}.xml $PLUGIN_DEST_PATH/BlacklistedItems/BlacklistedItems.configuration.xml
+    cp ${TEMP_DIR}/Configs/Plugins/BlacklistedItems/${BLACKLISTED_ITEMS_CONFIG}.xml $PLUGIN_DEST_PATH/BlacklistedItems/BlacklistedItems.configuration.xml
 fi
 
 # Clean up temporary directory
