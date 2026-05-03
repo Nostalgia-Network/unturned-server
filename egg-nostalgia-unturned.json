@@ -4,7 +4,7 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-04-28T18:31:29-07:00",
+    "exported_at": "2026-05-03T14:24:47-07:00",
     "name": "Nostalgia Unturned",
     "author": "marianasaltyns@gmail.com",
     "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
@@ -13,7 +13,7 @@
         "nostalgianetwork\/unturned-server:latest": "nostalgianetwork\/unturned-server:latest"
     },
     "file_denylist": [],
-    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{DIFFICULTY}} +InternetServer\/unturned",
+    "startup": ".\/Unturned_Headless.x86_64 -batchmode -nographics -LogSteamNetworkingSockets=0 -ThreadedConsole {{CPU_PRIORITY}} -port {{SERVER_PORT}} -gslt {{LOGIN_TOKEN}} -name \"{{SERVER_NAME}}\" -maxplayers {{MAX_PLAYERS}} -map \"{{MAP}}\" -perspective {{PERSPECTIVE}} -mode {{GAMEMODE}} +InternetServer\/unturned",
     "config": {
         "files": "{}",
         "startup": "{\r\n    \"done\": \"Loading level: 100%\"\r\n}",
@@ -159,9 +159,9 @@
             "field_type": "text"
         },
         {
-            "name": "Difficulty",
+            "name": "Game Mode",
             "description": "Server difficulty",
-            "env_variable": "DIFFICULTY",
+            "env_variable": "GAMEMODE",
             "default_value": "Normal",
             "user_viewable": true,
             "user_editable": true,
@@ -206,6 +206,16 @@
             "user_viewable": true,
             "user_editable": true,
             "rules": "nullable|string|max:64",
+            "field_type": "text"
+        },
+        {
+            "name": "Blacklisted Items",
+            "description": "Leaving this blank will prevent the plugin from being installed.",
+            "env_variable": "BLACKLISTED_ITEMS_CONFIG",
+            "default_value": "",
+            "user_viewable": true,
+            "user_editable": true,
+            "rules": "nullable|string|max:20",
             "field_type": "text"
         }
     ]

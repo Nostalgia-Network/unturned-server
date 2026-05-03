@@ -119,6 +119,20 @@ if [ -n "${ROCKET_DIR}" ]; then
     cp -r $ROCKET_SOURCE_PATH/* $ROCKET_DEST_PATH
 fi
 
+# Install optional plugins
+PLUGIN_SOURCE_PATH="${TEMP_DIR}/Rocket/Optional/"
+PLUGIN_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins"
+
+# Install Blacklisted Items plugin
+if [ -n "${BLACKLISTED_ITEMS_CONFIG}" ]; then
+    echo -e "${GREEN}Moving $PLUGIN_SOURCE_PATH to $PLUGIN_DEST_PATH"
+    cp $PLUGIN_SOURCE_PATH $PLUGIN_DEST_PATH
+
+    # Install server-specific config
+    mkdir -p $PLUGIN_DEST_PATH/BlacklistedItems/
+    cp ${BLACKLISTED_ITEMS_CONFIG} $PLUGIN_DEST_PATH/BlacklistedItems/BlacklistedItems.configuration.xml
+fi
+
 # Clean up temporary directory
 echo -e "${GREEN}Cleaning up: removing temporary directory ${TEMP_DIR}"
 rm -rf ${TEMP_DIR}
