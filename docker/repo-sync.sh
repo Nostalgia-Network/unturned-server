@@ -125,8 +125,8 @@ PLUGIN_DEST_PATH="${INSTALL_DIR}/Rocket/Plugins"
 
 # Install Blacklisted Items plugin
 if [ -n "${BLACKLISTED_ITEMS_CONFIG}" ]; then
-    echo -e "${GREEN}Moving $PLUGIN_SOURCE_PATH to $PLUGIN_DEST_PATH"
-    cp $PLUGIN_SOURCE_PATH $PLUGIN_DEST_PATH
+    echo -e "${GREEN}Moving $PLUGIN_SOURCE_PATH/BlacklistedItems.dll to $PLUGIN_DEST_PATH/BlacklistedItems.dll"
+    cp $PLUGIN_SOURCE_PATH/BlacklistedItems.dll $PLUGIN_DEST_PATH/BlacklistedItems.dll
 
     # Install server-specific config
     mkdir -p $PLUGIN_DEST_PATH/BlacklistedItems/
