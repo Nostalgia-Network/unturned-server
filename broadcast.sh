@@ -2,7 +2,7 @@
 
 source .env
 
-NAME_PREFIX="NOS-UNT"
+NAME_PREFIX="${1:-NOS-UNT-00}"
 
 echo "Starting batch broadcast. Press ^C at any time to cancel..."
 echo "Fetching server list..."
@@ -28,10 +28,36 @@ if [ ${#SERVER_IDS[@]} -eq 0 ]; then
     exit 1
 fi
 
-echo "Found ${#SERVER_IDS[@]} servers:"
+echo "Validating server states..."
+VALID_SERVER_IDS=()
+VALID_SERVER_NAMES=()
+
 for i in "${!SERVER_IDS[@]}"; do
-    echo " - [Name: ${SERVER_NAMES[i]}] (ID: ${SERVER_IDS[i]})"
+    uuid="${SERVER_IDS[i]}"
+    name="${SERVER_NAMES[i]}"
+
+    # Fetch server resource/status
+    state=$(curl -s -H "Authorization: Bearer ${PTERODACTYL_API_KEY}" \
+        -H "Accept: application/json" \
+        "${PTERODACTYL_API}/api/client/servers/${uuid}/resources" | \
+        jq -r '.attributes.current_state')
+
+    if [ "$state" == "offline" ] || [ "$state" == "null" ]; then
+        echo "   -> Skipping $name ($uuid) as it is offline/stopped."
+    else
+        echo " - [Name: $name] (ID: $uuid) - Status: $state"
+        VALID_SERVER_IDS+=("$uuid")
+        VALID_SERVER_NAMES+=("$name")
+    fi
 done
+
+SERVER_IDS=("${VALID_SERVER_IDS[@]}")
+SERVER_NAMES=("${VALID_SERVER_NAMES[@]}")
+
+if [ ${#SERVER_IDS[@]} -eq 0 ]; then
+    echo "No running servers found starting with '$NAME_PREFIX'. Exiting."
+    exit 1
+fi
 
 send_api_request() {
     local endpoint=$1
@@ -88,21 +114,37 @@ broadcast_power() {
     done
 }
 
-broadcast_command '/say "Emergency hotfix incoming! The server will perform an unscheduled restart in 3 minutes."'
-echo "[$(date +%T)] Pause: 2 minutes..."
-sleep 120
-broadcast_command '/say "Emergency hotfix incoming! The server will perform an unscheduled restart in 1 minutes."'
-echo "[$(date +%T)] Pause: 55 seconds..."
-sleep 55
+# Execution logic based on $2
+case "$2" in
+    "hotfix")
+        broadcast_command '/say "Emergency hotfix incoming! The server will perform an unscheduled restart in 3 minutes."'
+        echo "[$(date +%T)] Pause: 2 minutes..."
+        sleep 120
+        broadcast_command '/say "Emergency hotfix incoming! The server will perform an unscheduled restart in 1 minutes."'
+        echo "[$(date +%T)] Pause: 55 seconds..."
+        sleep 55
 
-for i in {5..1}; do
-    sleep 1
-    broadcast_command "/say \"Server restarting in $i...\""
-    echo "[$(date +%T)] Pause: 1 second..."
-done
+        for i in {5..1}; do
+            sleep 1
+            broadcast_command "/say \"Server restarting in $i...\""
+            echo "[$(date +%T)] Pause: 1 second..."
+        done
 
-sleep 1
-broadcast_command '/save'
-broadcast_power 'restart'
+        sleep 1
+        broadcast_command '/save'
+        broadcast_power 'restart'
 
-echo "All $NAME_PREFIX servers have been signaled for restart."
+        echo "All $NAME_PREFIX servers have been signaled for restart."
+        ;;
+    "message")
+        if [ -n "$3" ]; then
+            broadcast_command "/say \"$3\""
+        else
+            echo "Error: 'message' specified but no message string provided in \$3."
+            exit 1
+        fi
+        ;;
+    *)
+        # No action should be done
+        ;;
+esac
