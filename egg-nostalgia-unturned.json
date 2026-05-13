@@ -4,11 +4,11 @@
         "version": "PTDL_v2",
         "update_url": null
     },
-    "exported_at": "2026-05-03T14:24:47-07:00",
+    "exported_at": "2026-05-13T10:00:11-07:00",
     "name": "Nostalgia Unturned",
     "author": "marianasaltyns@gmail.com",
-    "description": "Unturned dedicated server with GitHub repository sync, modified for more versatility.",
-    "features": null,
+    "description": "Unturned dedicated server with GitHub repository sync",
+    "features": [],
     "docker_images": {
         "nostalgianetwork\/unturned-server:latest": "nostalgianetwork\/unturned-server:latest"
     },
